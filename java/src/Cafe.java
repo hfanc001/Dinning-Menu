@@ -435,17 +435,28 @@ public class Cafe {
       }
    }//end
 
+//-----------------------TO - DO---------------------------------------
    public static String find_type(Cafe esql){
-      // Your code goes here.
-      // ...
-      // ...
+      //read the username and find out the type of it and return that type
       return "Employee";
    }
 
    public static void BrowseMenuName(Cafe esql){
-      // Your code goes here.
-      // ...
-      // ...
+      // ask to enter itemName
+      // find the info for that item
+      // display and exit
+      try{  
+        String query = "SELECT * FROM Menu M WHERE M.itemname = ";
+        System.out.print("\tEnter item name: ");
+        String input = in.readLine();
+        query += "\'"; 
+        query += input;
+        query += "\'"; 
+        int rowCount = esql.executeQuery(query);
+        System.out.println ("total row(s): " + rowCount);
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+      }
    }//end
 
    public static void BrowseMenuType(Cafe esql){
