@@ -446,23 +446,34 @@ public class Cafe {
       // find the info for that item
       // display and exit
       try{  
-        String query = "SELECT * FROM Menu M WHERE M.itemname = ";
+        String query = "SELECT * FROM Menu M WHERE M.itemName = ";
         System.out.print("\tEnter item name: ");
         String input = in.readLine();
         query += "\'"; 
         query += input;
         query += "\'"; 
+
         int rowCount = esql.executeQuery(query);
-        System.out.println ("total row(s): " + rowCount);
+        System.out.println ("\ttotal row(s): " + rowCount);
       }catch(Exception e){
          System.err.println (e.getMessage());
       }
    }//end
 
    public static void BrowseMenuType(Cafe esql){
-      // Your code goes here.
-      // ...
-      // ...
+      try{  
+        String query = "SELECT * FROM Menu M WHERE M.type = ";
+        System.out.print("\tEnter item type: ");
+        String input = in.readLine();
+        query += "\'"; 
+        query += input;
+        query += "\'"; 
+
+        int rowCount = esql.executeQuery(query);
+        System.out.println ("\ttotal row(s): " + rowCount);
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+      }
    }//end
 
    public static Integer AddOrder(Cafe esql){
