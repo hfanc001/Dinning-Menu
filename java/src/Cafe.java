@@ -436,7 +436,7 @@ public class Cafe {
    }//end
 
 //-----------------------TO - DO---------------------------------------
-   public static String find_type(Cafe esql, authorisedUser){
+   public static String find_type(Cafe esql, String login){
       //read the username and find out the type of it and return that type
       /*
       String query = "SELECT 
@@ -480,7 +480,7 @@ public class Cafe {
       }
    }//end
 
-   public static Integer AddOrder(Cafe esql, authorisedUser){
+   public static Integer AddOrder(Cafe esql, String login){
    		/*
    		try
    		{
@@ -526,60 +526,61 @@ public class Cafe {
 		 	{
 		 		System.err.println(e.getMessage());
 		 	}
-   		
+   		*/
+   		Integer order_id = 0;
       return order_id;
-      */
+      
    }//end 
 
-   public static void UpdateOrder(Cafe esql, authorisedUser){
+   public static void UpdateOrder(Cafe esql, String login){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void EmployeeUpdateOrder(Cafe esq, authorisedUserl){
+   public static void EmployeeUpdateOrder(Cafe esq, String login){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void ViewOrderHistory(Cafe esql, authorisedUser){
+   public static void ViewOrderHistory(Cafe esql, String login){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void UpdateUserInfo(Cafe esql, authorisedUser){
+   public static void UpdateUserInfo(Cafe esql, String login){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void ManagerUpdateUserInfo(Cafe esql, authorisedUser){
+   public static void ManagerUpdateUserInfo(Cafe esql, String login){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void UpdateMenu(Cafe esql, authorisedUser){
+   public static void UpdateMenu(Cafe esql, String login){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void ViewOrderStatus(Cafe esql, authorisedUser){
+   public static void ViewOrderStatus(Cafe esql, String login){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void ViewCurrentOrder(Cafe esql, authorisedUser){
+   public static void ViewCurrentOrder(Cafe esql, String login){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void addItemStatus(Cafe esqp, order_id, authorisedUser){
+   public static void addItemStatus(Cafe esqp, Integer order_id, String login){
       /*//make item status 
 		 		System.out.print("\tPlease enter the item name: ");
 		 		String item = in.readLine();
