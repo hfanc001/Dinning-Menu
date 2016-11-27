@@ -23,6 +23,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
+import java.lang.Object;
+import java.text.Format;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
 
 /**
  * This class defines a simple embedded SQL utility class that is designed to
@@ -490,6 +494,8 @@ public class Cafe {
 		 		
 		 		query = "SELECT o.orderid FROM Orders o WHERE o.total = '-1'";
 		 		order_id = Integer.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
+		 		query = String.format("UPDATE Orders o SET total= '0' WHERE o.orderid = '%s'", order_id);
+		 		esql.executeUpdate(query);
 		 		
 		 		addItemStatus(esql, order_id, login);
 		 		
@@ -503,15 +509,20 @@ public class Cafe {
 			 		if((input.equals("n")) || (input.equals("N")))
 			 		{
 			 			more = false;
-/*			 			System.out.print("\tYour order is:");
-			 			query =  String.format("SELECT i.itemname FROM itemStauts i WHERE i.orderid = '%s'", order_id);
+			 			System.out.println("Your order:");
+			 			query =  String.format("SELECT i.itemname FROM itemStatus i WHERE i.orderid = '%s'", order_id);
 		 				int rowCount = esql.executeQuery(query);
-         		System.out.println ("total row(s): " + rowCount);
+         		System.out.println ("Total Items: " + rowCount);
          		
-         		System.out.print("\tYour total is:");
+         		//print order total
          		query =  String.format("SELECT o.total FROM Orders O WHERE O.orderid = '%s'", order_id);
-         		System.out.print("\tThank you for your order!");
-         		*/			
+		 				Double total = Double.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
+		 				DecimalFormat df = new DecimalFormat("$###,###.##");
+		 				df.format(total);
+		 				System.out.println("Order total: $" + total);
+		 				System.out.println("Order id is: " + order_id);
+         		System.out.println("Thank you for your order!");
+         					
 			 		}
 			 		else if ((input.equals("y")) || (input.equals("Y")))
 			 		{
@@ -529,9 +540,7 @@ public class Cafe {
 		 		System.err.println(e.getMessage());
 		 	}
    		
-   		//Integer order_id = 0;
-   		System.out.println("Order id is: " + order_id);
-      return order_id;
+   		return order_id;
       
    }//end AddOrder
 
@@ -588,6 +597,7 @@ public class Cafe {
       //make item status 
 	 		System.out.print("\tPlease enter the item name: ");
 	 		String item = in.readLine();
+	 		Double new_total = 0.0;
 	 		
 	 		//check if item exists
 	 		String query =  String.format("SELECT * FROM Menu M WHERE M.itemName = '%s'", item);
@@ -600,7 +610,21 @@ public class Cafe {
  			  query = String.format("INSERT INTO itemStatus VALUES (%s, '%s', CURRENT_TIMESTAMP, '%s')", order_id, item, status);
 		 		esql.executeUpdate(query);
 		 		
- 			}
+		 		//find the new item price
+		 		query = String.format("SELECT M.price FROM Menu M WHERE M.itemName = '%s'", item);
+		 		new_total = Double.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
+		 		//add to old total price
+				query = String.format("SELECT o.total FROM Orders o WHERE o.orderid = '%s'", order_id);
+		 		new_total += Double.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
+		 		
+		 		//add to orders
+		 		query = String.format("UPDATE Orders o SET total= '%s' WHERE o.orderid = '%s'", new_total, order_id);
+		 		esql.executeUpdate(query);
+		 		
+		 		//test print the new total
+		 		query = String.format("SELECT o.total FROM Orders o WHERE o.orderid = '%s'", order_id);
+		 		new_total = Double.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
+			}
  			else
  			{
  				System.out.print("\tInvalid name!");		
