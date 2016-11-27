@@ -481,28 +481,29 @@ public class Cafe {
    }//end
 
    public static Integer AddOrder(Cafe esql, String login){
-   		/*
+			Integer order_id = 0;
    		try
    		{
 		 		//create new order to get id
-		 		String query = "INSERT INTO Orders (login, paid, timestamprecieved, total) VALUES (";
-		 		executeUpdate(query);
-		 		query = "SELECT o.orderid FROM Orders WHERE o.total = '-1'";
-		 		Integer order_id = esql.executeQueryGetResult(query).get(0).get(0);
+		 		String query = String.format("INSERT INTO Orders (login, paid, timestamprecieved, total) VALUES ('%s', 'f', CURRENT_TIMESTAMP, -1)", login);
+		 		esql.executeUpdate(query);
 		 		
-		 		addItemStatus(esql, order_id)
+		 		query = "SELECT o.orderid FROM Orders o WHERE o.total = '-1'";
+		 		order_id = Integer.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
 		 		
-		 		System.out.print("\tIs there any other order to make? (Y/N)");
-		 		String input = in.readLine();
+		 		addItemStatus(esql, order_id, login);
 		 		
 		 		boolean more = true;
 		 		
 		 		while(more)
 		 		{
-			 		if((input == "n") || (input == "N"))
+					System.out.print("\tIs there any other order to make? (Y/N)");
+		 			String input = in.readLine();		 		
+		 		
+			 		if((input.equals("n")) || (input.equals("N")))
 			 		{
 			 			more = false;
-			 			System.out.print("\tYour order is:");
+/*			 			System.out.print("\tYour order is:");
 			 			query =  String.format("SELECT i.itemname FROM itemStauts i WHERE i.orderid = '%s'", order_id);
 		 				int rowCount = esql.executeQuery(query);
          		System.out.println ("total row(s): " + rowCount);
@@ -510,16 +511,16 @@ public class Cafe {
          		System.out.print("\tYour total is:");
          		query =  String.format("SELECT o.total FROM Orders O WHERE O.orderid = '%s'", order_id);
          		System.out.print("\tThank you for your order!");
-         		break;			 			
+         		*/			
 			 		}
-			 		else if ((input == "y") || (input == "Y"))
+			 		else if ((input.equals("y")) || (input.equals("Y")))
 			 		{
-			 			addItemStatus(esql, order_id);
+			 			addItemStatus(esql, order_id, login);
 			 		}
 			 		else
 			 		{
-			 			System.out.print("\tUnrecognized choice");
-			 			System.out.print("\tIs there any other order to make? (Y/N)");
+			 			System.out.println("\tUnrecognized choice");
+			 			System.out.println("\tIs there any other order to make? (Y/N)");
 			 		}
 				}		
 		 		
@@ -527,11 +528,12 @@ public class Cafe {
 		 	{
 		 		System.err.println(e.getMessage());
 		 	}
-   		*/
-   		Integer order_id = 0;
+   		
+   		//Integer order_id = 0;
+   		System.out.println("Order id is: " + order_id);
       return order_id;
       
-   }//end 
+   }//end AddOrder
 
    public static void UpdateOrder(Cafe esql, String login){
       // Your code goes here.
@@ -581,35 +583,32 @@ public class Cafe {
       // ...
    }//end
 
-   public static void addItemStatus(Cafe esqp, Integer order_id, String login){
-      /*//make item status 
-		 		System.out.print("\tPlease enter the item name: ");
-		 		String item = in.readLine();
+   public static void addItemStatus(Cafe esql, Integer order_id, String login){
+   	try{	
+      //make item status 
+	 		System.out.print("\tPlease enter the item name: ");
+	 		String item = in.readLine();
+	 		
+	 		//check if item exists
+	 		String query =  String.format("SELECT * FROM Menu M WHERE M.itemName = '%s'", item);
+ 			int userNum = esql.executeQueryCount(query);
+ 			
+ 			if(userNum > 0)
+ 			{
+ 				//item name exists, insert
+ 				String status = "Hasnt started";
+ 			  query = String.format("INSERT INTO itemStatus VALUES (%s, '%s', CURRENT_TIMESTAMP, '%s')", order_id, item, status);
+		 		esql.executeUpdate(query);
 		 		
-		 		if(checkItemExists(esql, item))
-		 		{
-		 			query =  String.format("SELECT * FROM Menu M WHERE M.itemName = '%s'", item);
-		 			int userNum = esql.executeQueryCount(query);
-		 			
-		 			if(userNum > 0)
-		 			{
-		 				//item name exists, insert
-		 				String status = "Hasn\'t started";
-		 				String sql = "INSERT INTO itemStatus VALUES ('?, '?, CURRENT_TIMESTAMP, '?)"
-		 				PreparedStatement pstmy = con.prepareStatement(sql);
-		 				pstmt.setString(1, order_id);
-		 				pstmt.setString(2, item);
-		 				pstmt.setString(4, status);
-		 				
-		 				int rowCount = esql.executeQuery(query);
-		       	System.out.println ("total row(s): " + rowCount);
-		 			}
-		 			else
-		 			{
-		 				System.err.println (e.getMessage());
-		 			}
-		 		}
-		 	*/
-   }//end Query6
+ 			}
+ 			else
+ 			{
+ 				System.out.print("\tInvalid name!");		
+ 			}
+	 		
+		 }catch(Exception e){
+         System.err.println (e.getMessage());
+     }
+   }//end addItemStatus
 
 }//end Cafe
