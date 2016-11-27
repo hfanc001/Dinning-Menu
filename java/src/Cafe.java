@@ -84,8 +84,8 @@ public class Cafe {
       // close the instruction
       stmt.close ();
    }//end executeUpdate
-
-   /**
+   
+/**
     * Method to execute an input query SQL instruction (i.e. SELECT).  This
     * method issues the query to the DBMS and outputs the results to
     * standard out.
@@ -94,7 +94,7 @@ public class Cafe {
     * @return the number of rows returned
     * @throws java.sql.SQLException when failed to execute the query
     */
-   public int executeQueryAndPrintResult (String query) throws SQLException {
+   public int executeQuery (String query) throws SQLException {
       // creates a statement object
       Statement stmt = this._connection.createStatement ();
 
@@ -112,13 +112,13 @@ public class Cafe {
       // iterates through the result set and output them to standard out.
       boolean outputHeader = true;
       while (rs.next()){
-	 if(outputHeader){
-	    for(int i = 1; i <= numCol; i++){
-		System.out.print(rsmd.getColumnName(i) + "\t");
-	    }
-	    System.out.println();
-	    outputHeader = false;
-	 }
+         if(outputHeader){
+            for(int i = 1; i <= numCol; i++){
+                System.out.print(rsmd.getColumnName(i) + "\t");
+            }
+            System.out.println();
+            outputHeader = false;
+         }
          for (int i=1; i<=numCol; ++i)
             System.out.print (rs.getString (i) + "\t");
          System.out.println ();
@@ -127,8 +127,8 @@ public class Cafe {
       stmt.close ();
       return rowCount;
    }//end executeQuery
-
-   /**
+   
+ /**
     * Method to execute an input query SQL instruction (i.e. SELECT).  This
     * method issues the query to the DBMS and returns the results as
     * a list of records. Each record in turn is a list of attribute values
@@ -137,7 +137,7 @@ public class Cafe {
     * @return the query result as a list of records
     * @throws java.sql.SQLException when failed to execute the query
     */
-   public List<List<String>> executeQueryAndReturnResult (String query) throws SQLException { 
+   public List<List<String>> executeQueryGetResult (String query) throws SQLException { 
       // creates a statement object 
       Statement stmt = this._connection.createStatement (); 
  
@@ -163,7 +163,7 @@ public class Cafe {
       }//end while 
       stmt.close (); 
       return result; 
-   }//end executeQueryAndReturnResult
+   }//end executeQueryGetResult
 
    /**
     * Method to execute an input query SQL instruction (i.e. SELECT).  This
@@ -173,7 +173,7 @@ public class Cafe {
     * @return the number of rows returned
     * @throws java.sql.SQLException when failed to execute the query
     */
-   public int executeQuery (String query) throws SQLException {
+   public int executeQueryCount (String query) throws SQLException {
        // creates a statement object
        Statement stmt = this._connection.createStatement ();
 
@@ -188,7 +188,7 @@ public class Cafe {
        }//end while
        stmt.close ();
        return rowCount;
-   }
+   }//end executeQueryCount
 
    /**
     * Method to fetch the last value from sequence. This
@@ -440,7 +440,7 @@ public class Cafe {
       //read the username and find out the type of it and return that type
       /*
       String query = "SELECT 
-      string userlogin = esql.executeQueryAndReturnResult(query).get(0).get(0);
+      string userlogin = esql.executeQuery(query).get(0).get(0);
       */
       return "Employee";
    }
@@ -450,7 +450,7 @@ public class Cafe {
       // find the info for that item
       // display and exit
       try{  
-        String query = "SELECT * FROM Menu M WHERE M.itemName = ";
+        String query = "SELECT M.itemname, M.type, M.price, M.description FROM Menu M WHERE M.itemName =";
         System.out.print("\tEnter item name: ");
         String input = in.readLine();
         query += "\'"; 
@@ -466,7 +466,7 @@ public class Cafe {
 
    public static void BrowseMenuType(Cafe esql){
       try{  
-        String query = "SELECT * FROM Menu M WHERE M.type = ";
+        String query = "SELECT M.itemname, M.type, M.price, M.description FROM Menu M WHERE M.type = ";
         System.out.print("\tEnter item type: ");
         String input = in.readLine();
         query += "\'"; 
@@ -486,8 +486,9 @@ public class Cafe {
    		{
 		 		//create new order to get id
 		 		String query = "INSERT INTO Orders (login, paid, timestamprecieved, total) VALUES (";
+		 		executeUpdate(query);
 		 		query = "SELECT o.orderid FROM Orders WHERE o.total = '-1'";
-		 		Integer order_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+		 		Integer order_id = esql.executeQueryGetResult(query).get(0).get(0);
 		 		
 		 		addItemStatus(esql, order_id)
 		 		
@@ -588,7 +589,7 @@ public class Cafe {
 		 		if(checkItemExists(esql, item))
 		 		{
 		 			query =  String.format("SELECT * FROM Menu M WHERE M.itemName = '%s'", item);
-		 			int userNum = esql.executeQuery(query);
+		 			int userNum = esql.executeQueryCount(query);
 		 			
 		 			if(userNum > 0)
 		 			{
