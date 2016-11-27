@@ -264,7 +264,7 @@ public class Cafe {
             }//end switch
             if (authorisedUser != null) {
               boolean usermenu = true;
-              String user_type = find_type(esql);
+              String user_type = find_type(esql, authorisedUser);
 	      switch (user_type){
 		case "Customer": 
 		  while(usermenu) {
@@ -282,11 +282,11 @@ public class Cafe {
                       switch (readChoice()){
                        case 1: BrowseMenuName(esql); break;
                        case 2: BrowseMenuType(esql); break;
-                       case 3: AddOrder(esql); break;
-                       case 4: UpdateOrder(esql); break;
-                       case 5: ViewOrderHistory(esql); break;
-                       case 6: ViewOrderStatus(esql); break;
-                       case 7: UpdateUserInfo(esql); break;
+                       case 3: AddOrder(esql, authorisedUser); break;
+                       case 4: UpdateOrder(esql, authorisedUser); break;
+                       case 5: ViewOrderHistory(esql, authorisedUser); break;
+                       case 6: ViewOrderStatus(esql, authorisedUser); break;
+                       case 7: UpdateUserInfo(esql, authorisedUser); break;
                        case 9: usermenu = false; break;
                        default : System.out.println("Unrecognized choice!"); break;
 		      }//end switch
@@ -307,11 +307,11 @@ public class Cafe {
                       switch (readChoice()){
                        case 1: BrowseMenuName(esql); break;
                        case 2: BrowseMenuType(esql); break;
-                       case 3: AddOrder(esql); break;
-                       case 4: EmployeeUpdateOrder(esql); break;
-                       case 5: ViewCurrentOrder(esql); break;
-                       case 6: ViewOrderStatus(esql); break;
-                       case 7: UpdateUserInfo(esql); break;
+                       case 3: AddOrder(esql, authorisedUser); break;
+                       case 4: EmployeeUpdateOrder(esql, authorisedUser); break;
+                       case 5: ViewCurrentOrder(esql, authorisedUser); break;
+                       case 6: ViewOrderStatus(esql, authorisedUser); break;
+                       case 7: UpdateUserInfo(esql, authorisedUser); break;
                        case 9: usermenu = false; break;
                        default : System.out.println("Unrecognized choice!"); break;
 		      }//end switch
@@ -333,12 +333,12 @@ public class Cafe {
                       switch (readChoice()){
                        case 1: BrowseMenuName(esql); break;
                        case 2: BrowseMenuType(esql); break;
-                       case 3: AddOrder(esql); break;
-                       case 4: EmployeeUpdateOrder(esql); break;
-                       case 5: ViewCurrentOrder(esql); break;
-                       case 6: ViewOrderStatus(esql); break;
-                       case 7: ManagerUpdateUserInfo(esql); break;
-                       case 8: UpdateMenu(esql); break;
+                       case 3: AddOrder(esql, authorisedUser); break;
+                       case 4: EmployeeUpdateOrder(esql, authorisedUser); break;
+                       case 5: ViewCurrentOrder(esql, authorisedUser); break;
+                       case 6: ViewOrderStatus(esql, authorisedUser); break;
+                       case 7: ManagerUpdateUserInfo(esql, authorisedUser); break;
+                       case 8: UpdateMenu(esql, authorisedUser); break;
                        case 9: usermenu = false; break;
                        default : System.out.println("Unrecognized choice!"); break;
 		      }//end switch
@@ -436,8 +436,12 @@ public class Cafe {
    }//end
 
 //-----------------------TO - DO---------------------------------------
-   public static String find_type(Cafe esql){
+   public static String find_type(Cafe esql, authorisedUser){
       //read the username and find out the type of it and return that type
+      /*
+      String query = "SELECT 
+      string userlogin = esql.executeQueryAndReturnResult(query).get(0).get(0);
+      */
       return "Employee";
    }
 
@@ -476,66 +480,134 @@ public class Cafe {
       }
    }//end
 
-   public static Integer AddOrder(Cafe esql){
-      // Your code goes here.
-      // ...
-      // ...
-      Integer orderid=0;
-      return orderid;
+   public static Integer AddOrder(Cafe esql, authorisedUser){
+   		/*
+   		try
+   		{
+		 		//create new order to get id
+		 		String query = "INSERT INTO Orders (login, paid, timestamprecieved, total) VALUES (";
+		 		query = "SELECT o.orderid FROM Orders WHERE o.total = '-1'";
+		 		Integer order_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+		 		
+		 		addItemStatus(esql, order_id)
+		 		
+		 		System.out.print("\tIs there any other order to make? (Y/N)");
+		 		String input = in.readLine();
+		 		
+		 		boolean more = true;
+		 		
+		 		while(more)
+		 		{
+			 		if((input == "n") || (input == "N"))
+			 		{
+			 			more = false;
+			 			System.out.print("\tYour order is:");
+			 			query =  String.format("SELECT i.itemname FROM itemStauts i WHERE i.orderid = '%s'", order_id);
+		 				int rowCount = esql.executeQuery(query);
+         		System.out.println ("total row(s): " + rowCount);
+         		
+         		System.out.print("\tYour total is:");
+         		query =  String.format("SELECT o.total FROM Orders O WHERE O.orderid = '%s'", order_id);
+         		System.out.print("\tThank you for your order!");
+         		break;			 			
+			 		}
+			 		else if ((input == "y") || (input == "Y"))
+			 		{
+			 			addItemStatus(esql, order_id);
+			 		}
+			 		else
+			 		{
+			 			System.out.print("\tUnrecognized choice");
+			 			System.out.print("\tIs there any other order to make? (Y/N)");
+			 		}
+				}		
+		 		
+		 	}catch(Exception e)
+		 	{
+		 		System.err.println(e.getMessage());
+		 	}
+   		
+      return order_id;
+      */
    }//end 
 
-   public static void UpdateOrder(Cafe esql){
+   public static void UpdateOrder(Cafe esql, authorisedUser){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void EmployeeUpdateOrder(Cafe esql){
+   public static void EmployeeUpdateOrder(Cafe esq, authorisedUserl){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void ViewOrderHistory(Cafe esql){
+   public static void ViewOrderHistory(Cafe esql, authorisedUser){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void UpdateUserInfo(Cafe esql){
+   public static void UpdateUserInfo(Cafe esql, authorisedUser){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void ManagerUpdateUserInfo(Cafe esql){
+   public static void ManagerUpdateUserInfo(Cafe esql, authorisedUser){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void UpdateMenu(Cafe esql){
+   public static void UpdateMenu(Cafe esql, authorisedUser){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void ViewOrderStatus(Cafe esql){
+   public static void ViewOrderStatus(Cafe esql, authorisedUser){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void ViewCurrentOrder(Cafe esql){
+   public static void ViewCurrentOrder(Cafe esql, authorisedUser){
       // Your code goes here.
       // ...
       // ...
    }//end
 
-   public static void Query6(Cafe esql){
-      // Your code goes here.
-      // ...
-      // ...
+   public static void addItemStatus(Cafe esqp, order_id, authorisedUser){
+      /*//make item status 
+		 		System.out.print("\tPlease enter the item name: ");
+		 		String item = in.readLine();
+		 		
+		 		if(checkItemExists(esql, item))
+		 		{
+		 			query =  String.format("SELECT * FROM Menu M WHERE M.itemName = '%s'", item);
+		 			int userNum = esql.executeQuery(query);
+		 			
+		 			if(userNum > 0)
+		 			{
+		 				//item name exists, insert
+		 				String status = "Hasn\'t started";
+		 				String sql = "INSERT INTO itemStatus VALUES ('?, '?, CURRENT_TIMESTAMP, '?)"
+		 				PreparedStatement pstmy = con.prepareStatement(sql);
+		 				pstmt.setString(1, order_id);
+		 				pstmt.setString(2, item);
+		 				pstmt.setString(4, status);
+		 				
+		 				int rowCount = esql.executeQuery(query);
+		       	System.out.println ("total row(s): " + rowCount);
+		 			}
+		 			else
+		 			{
+		 				System.err.println (e.getMessage());
+		 			}
+		 		}
+		 	*/
    }//end Query6
 
 }//end Cafe
