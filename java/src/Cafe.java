@@ -402,20 +402,20 @@ public class Cafe {
          String login = in.readLine();
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
-         System.out.print("\tEnter user phone: ");
+         System.out.print("\tEnter user phone: (can be leave blank)");
          String phone = in.readLine();
          
-	 String type="Customer";
-	 String favItems="";
+				 String type="Customer";
+				 String favItems="";
 
-	 String query = String.format("INSERT INTO USERS (phoneNum, login, password, favItems, type) VALUES ('%s','%s','%s','%s','%s')", phone, login, password, favItems, type);
+				 String query = String.format("INSERT INTO USERS (phoneNum, login, password, favItems, type) VALUES ('%s','%s','%s','%s','%s')", phone, login, password, favItems, type);
 
          esql.executeUpdate(query);
          System.out.println ("User successfully created!");
       }catch(Exception e){
          System.err.println (e.getMessage ());
       }
-   }//end
+   }//end CreateUser
    
    /*
     * Check log in credentials for an existing user
@@ -429,25 +429,36 @@ public class Cafe {
          String password = in.readLine();
 
          String query = String.format("SELECT * FROM Users WHERE login = '%s' AND password = '%s'", login, password);
-         int userNum = esql.executeQuery(query);
-	 if (userNum > 0)
-		return login;
-         return null;
+         int userNum = esql.executeQueryCount(query);
+				 if (userNum > 0)
+				 {
+				 	System.out.println("Logged in successfully!");
+					return login;
+				 }
+				 else
+				 {
+				 	System.out.println("Wrong user login or password");
+				 	return null;
+				 }
       }catch(Exception e){
-         System.err.println (e.getMessage ());
+        System.err.println (e.getMessage ());
          return null;
       }
-   }//end
+   }//end LogIn
 
-//-----------------------TO - DO---------------------------------------
-   public static String find_type(Cafe esql, String login){
-      //read the username and find out the type of it and return that type
-      /*
-      String query = "SELECT 
-      string userlogin = esql.executeQuery(query).get(0).get(0);
-      */
-      return "Employee";
-   }
+   public static String find_type(Cafe esql, String login){	
+		 	String type = null;
+		 	try{  
+         //read the username and find out the type of it and return that type
+				String query = String.format("SELECT u.type FROM Users u WHERE u.login='%s'", login);
+				type = String.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+      }
+      
+		 	return type;
+		 	//return "Employee";
+   }//end find_type
 
    public static void BrowseMenuName(Cafe esql){
       // ask to enter itemName
@@ -466,7 +477,7 @@ public class Cafe {
       }catch(Exception e){
          System.err.println (e.getMessage());
       }
-   }//end
+   }//end BrowseMenuName
 
    public static void BrowseMenuType(Cafe esql){
       try{  
@@ -482,7 +493,7 @@ public class Cafe {
       }catch(Exception e){
          System.err.println (e.getMessage());
       }
-   }//end
+   }//end BrowseMenuType
 
    public static Integer AddOrder(Cafe esql, String login){
 			Integer order_id = 0;
@@ -517,8 +528,8 @@ public class Cafe {
          		//print order total
          		query =  String.format("SELECT o.total FROM Orders O WHERE O.orderid = '%s'", order_id);
 		 				Double total = Double.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
-		 				DecimalFormat df = new DecimalFormat("$###,###.##");
-		 				df.format(total);
+		 				//DecimalFormat df = new DecimalFormat("$###,###.##");
+		 				//df.format(total);
 		 				System.out.println("Order total: $" + total);
 		 				System.out.println("Order id is: " + order_id);
          		System.out.println("Thank you for your order!");
@@ -544,6 +555,7 @@ public class Cafe {
       
    }//end AddOrder
 
+//-----------------------TO - DO---------------------------------------
    public static void UpdateOrder(Cafe esql, String login){
       // Your code goes here.
       // ...
