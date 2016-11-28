@@ -555,13 +555,66 @@ public class Cafe {
       
    }//end AddOrder
 
-//-----------------------TO - DO---------------------------------------
    public static void UpdateOrder(Cafe esql, String login){
-      // Your code goes here.
-      // ...
-      // ...
-   }//end
+   	try
+   	{
+      // ask for order id
+      System.out.print("\tPlease enter your order id: ");
+      String input = in.readLine();
+		 	Integer order_id = Integer.valueOf(input);		 		
+		 		
+      // check if paid
+      String query =  String.format("SELECT o.paid FROM Orders o WHERE o.orderid = '%s'", order_id);
+      String paid = esql.executeQueryGetResult(query).get(0).get(0);
+		 			
+		 	//	if paid, cannot update	
+		 	if(paid.equals("t"))
+		 	{
+		 		System.out.println("\tSorry, the order has been processed");
+		 	}
+		 	//	if not paid, ask which to update
+      //		1. add item
+      //		2. delete item
+		 	else
+		 	{        		
+		 		boolean notAnswered = true;
+		 		do
+		 		{
+					System.out.println("Your order:");
+		 			query =  String.format("SELECT i.itemname FROM itemStatus i WHERE i.orderid = '%s'", order_id);
+		 			int rowCount = esql.executeQuery(query);
 
+			 		System.out.println("\tWhat changes would you like to make?");
+			 		System.out.println("\t\t1. Add another item");
+			 		System.out.println("\t\t2. Delete an item");
+			 		System.out.println("\t\t3. Finish editing");
+			 		input = in.readLine();
+			 		if(input.equals("1"))
+			 		{
+			 			addItemStatus(esql, order_id, login);
+			 		}
+			 		else if(input.equals("2"))
+			 		{
+			 			deleteItem(esql, order_id);
+			 		}
+			 		else if(input.equals("3"))
+			 		{
+			 			System.out.println("Thank you for checking your order");
+			 			notAnswered = false;
+			 		}
+			 		else
+			 		{
+			 			System.out.println("Unrecognized choice. Please enter again");
+			 		}
+			 	}while(notAnswered);
+		 	}
+    }catch(Exception e)
+		{
+			System.err.println(e.getMessage());
+		}
+   }//end UpdateOrder
+
+//-----------------------TO - DO---------------------------------------
    public static void EmployeeUpdateOrder(Cafe esq, String login){
       // Your code goes here.
       // ...
@@ -646,5 +699,32 @@ public class Cafe {
          System.err.println (e.getMessage());
      }
    }//end addItemStatus
+   
+   
+	public static void deleteItem(Cafe esql, Integer order_id){
+   	try
+   	{	
+   		System.out.println("\tWhich item would you like to delete?");
+			String item = in.readLine();
+			
+			//check if item exists
+	 		String query =  String.format("SELECT * FROM itemStatus i WHERE i.itemName='%s' AND i.orderid='%s'", item, order_id);
+ 			int userNum = esql.executeQueryCount(query);
+ 			
+ 			if(userNum > 0)
+ 			{
+ 				//item name exists, delete
+ 				query = String.format("DELETE FROM itemStatus WHERE itemname='%s' AND orderid='%s'", item, order_id);
+		 		esql.executeUpdate(query);	
+ 				System.out.println("\tDeleted!");
+		 	}
+		 	else
+		 	{
+		 		System.out.print("\tThe item is not in your order list");
+		 	}
+		}catch(Exception e){
+         System.err.println (e.getMessage());
+     }
+   }//end deleteItem
 
 }//end Cafe
