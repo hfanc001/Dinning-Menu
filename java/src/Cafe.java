@@ -912,13 +912,19 @@ public class Cafe {
    }//end ViewOrderStatus
 
 
-//see any order that is unpaid
+//see any order that is unpaid within the past 24 hours
    public static void ViewCurrentOrder(Cafe esql, String login){
-      /*try{
-      	//insert your code here
+      try{
+      	
+      	String query = String.format("SELECT * FROM Orders WHERE paid='f' AND timestamprecieved >= NOW()-'1 day'::INTERVAL");
+      	if(esql.executeQuery(query) == 0)
+      	{
+      		System.out.println("\tThere is not current order");
+      	}
+      	
       }catch(Exception e){
          System.err.println (e.getMessage());
-     }*/
+     }
    }//end
 
    public static void addItemStatus(Cafe esql, Integer order_id){
