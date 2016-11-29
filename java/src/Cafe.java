@@ -899,6 +899,8 @@ public class Cafe {
 	if(userNum > 0)
 	{
 		esql.executeQuery(query);
+		query = String.format("SELECT * FROM itemStatus WHERE orderid='%s'", order_id);
+		esql.executeQuery(query);
 	}
 	else
 	{
@@ -909,6 +911,8 @@ public class Cafe {
      }
    }//end ViewOrderStatus
 
+
+//see any order that is unpaid
    public static void ViewCurrentOrder(Cafe esql, String login){
       /*try{
       	//insert your code here
