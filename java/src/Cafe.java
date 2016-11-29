@@ -615,13 +615,160 @@ public class Cafe {
    }//end UpdateOrder
 
 //-----------------------TO - DO---------------------------------------
-   public static void EmployeeUpdateOrder(Cafe esq, String login){
-     /*try{
-      	//insert your code here
+   public static void EmployeeUpdateOrder(Cafe esql, String login){
+     try{
+      	System.out.print("\tPlease enter the order ID: ");
+      	String order_id = in.readLine();
+      	
+      	//check if the order exists
+      	String query =  String.format("SELECT * FROM Orders WHERE orderid = '%s'", order_id);
+	int userNum = esql.executeQueryCount(query);
+	
+	if(userNum > 0)
+	{
+		esql.executeQuery(query);
+		boolean done = false;
+		do
+		{
+			System.out.println("\tPlease select what you want to update");
+			System.out.println("\t\t1. Change the paid status");
+			System.out.println("\t\t2. Change item status");
+			System.out.println("\t\t9. Nothing");
+			String option = in.readLine();
+			if(option.equals("1"))
+			{
+				//give options to update the status
+ 				System.out.println("\tWhich status would you like to change it to?");
+ 				System.out.println("\t\t1. Paid");
+ 				System.out.println("\t\t2. Unpaid");
+ 				
+ 				String pay = null;
+ 				boolean chosen = false;
+ 				do
+ 				{
+ 					String ans = in.readLine();
+ 					if(ans.equals("1"))
+ 					{
+ 						pay = "t";
+ 						chosen = true;
+ 					}
+ 					else if(ans.equals("2"))
+ 					{
+ 						pay = "f";
+ 						chosen = true;
+ 					}
+ 					else
+ 					{
+ 						System.out.print("\tUnrecognized choice! Please enter again: ");
+ 					}		 					
+ 				}while(!chosen);
+ 				
+ 				query = String.format("UPDATE Orders SET paid='%s' WHERE orderid=%s", pay, order_id);
+ 				esql.executeUpdate(query);
+ 				query =  String.format("SELECT * FROM Orders WHERE orderid = '%s'", order_id);
+ 				esql.executeQuery(query);
+			}
+			else if(option.equals("2"))
+			{
+				System.out.println("\tThe following items are in the current order:");
+				query = String.format("SELECT * FROM itemStatus WHERE orderid='%s'", order_id);
+				esql.executeQuery(query);
+				boolean more = false;
+				do
+				{
+					System.out.print("\tPlease enter the item name that you want to update: ");
+					String name = in.readLine();
+					//check if item exists
+			 		query =  String.format("SELECT * FROM Menu M WHERE M.itemName = '%s'", name);
+		 			userNum = esql.executeQueryCount(query);
+		 			
+		 			if(userNum > 0)
+		 			{
+		 				//give options to update the status
+		 				System.out.println("\tWhich status would you like to change it to?");
+		 				System.out.println("\t\t1. Finished");
+		 				System.out.println("\t\t2. Hasnt Started");
+		 				System.out.println("\t\t3. Started");
+		 				
+		 				String status = null;
+		 				boolean chosen = false;
+		 				do
+		 				{
+		 					String ans = in.readLine();
+		 					if(ans.equals("1"))
+		 					{
+		 						status = "Finished";
+		 						chosen = true;
+		 					}
+		 					else if(ans.equals("2"))
+		 					{
+		 						status = "Hasnt Started";
+		 						chosen = true;
+		 					}
+		 					else if(ans.equals("3"))
+		 					{
+		 						status = "Started";
+		 						chosen = true;
+		 					}
+		 					else
+		 					{
+		 						System.out.print("\tUnrecognized choice! Please enter again: ");
+		 					}		 					
+		 				}while(!chosen);
+		 				
+		 				query = String.format("UPDATE itemStatus SET status='%s' WHERE itemname='%s' AND orderid=%s", status, name, order_id);
+		 				esql.executeUpdate(query);
+		 			}
+		 			else
+		 			{
+		 				System.out.println("\tThe item does not exist in this order!");
+		 			}
+		 			
+		 			query = String.format("SELECT * FROM itemStatus WHERE orderid='%s'", order_id);
+					esql.executeQuery(query);
+				
+		 			
+		 			//ask if more
+		 			System.out.print("Is there any other item you would like to update?(Y/N) ");
+		 			boolean answered = false;
+		 			do
+		 			{
+						String other = in.readLine();
+						if((other.equals("Y")) || (other.equals("y")))
+						{
+							more = true;
+							answered = true;
+						}
+						else if((other.equals("N")) || (other.equals("n")))
+						{
+							answered = true;
+						}
+						else
+						{
+							System.out.print("\tUnrecognized choice! Please enter again: ");
+						}
+		 			}while(!answered);
+		 		}while(more);
+			}
+			else if(option.equals("9"))
+			{
+				System.out.println("\tThank you for updating");
+				done=true;
+			}
+			else
+			{
+				System.out.print("\tUnrecognized choice!");
+			}
+		}while(!done);
+	}
+	else
+	{
+		System.out.println("\tThe order ID does not exist");
+	}
       }catch(Exception e){
          System.err.println (e.getMessage());
-     }*/
-   }//end
+     }
+   }//end EmployeeUpdateOrder
 
    public static void ViewOrderHistory(Cafe esql, String login){
       try{
