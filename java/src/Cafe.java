@@ -616,27 +616,35 @@ public class Cafe {
 
 //-----------------------TO - DO---------------------------------------
    public static void EmployeeUpdateOrder(Cafe esq, String login){
-      // Your code goes here.
-      // ...
-      // ...
+     /*try{
+      	//insert your code here
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+     }*/
    }//end
 
    public static void ViewOrderHistory(Cafe esql, String login){
-      // Your code goes here.
-      // ...
-      // ...
+      /*try{
+      	//insert your code here
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+     }*/
    }//end
 
    public static void UpdateUserInfo(Cafe esql, String login){
-      // Your code goes here.
-      // ...
-      // ...
+      /*try{
+      	//insert your code here
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+     }*/
    }//end
 
    public static void ManagerUpdateUserInfo(Cafe esql, String login){
-      // Your code goes here.
-      // ...
-      // ...
+      /*try{
+      	//insert your code here
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+     }*/
    }//end
 
    public static void UpdateMenu(Cafe esql, String login){
@@ -828,15 +836,33 @@ public class Cafe {
    }//end UpdateMenu
 
    public static void ViewOrderStatus(Cafe esql, String login){
-      // Your code goes here.
-      // ...
-      // ...
-   }//end
+      try{
+      	System.out.print("\tPlease enter your order ID: ");
+      	String order_id = in.readLine();
+      	
+      	//check if the order exists
+      	String query =  String.format("SELECT * FROM Orders WHERE orderid = '%s'", order_id);
+	int userNum = esql.executeQueryCount(query);
+	
+	if(userNum > 0)
+	{
+		esql.executeQuery(query);
+	}
+	else
+	{
+		System.out.println("\tThe order ID does not exist");
+	}
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+     }
+   }//end ViewOrderStatus
 
    public static void ViewCurrentOrder(Cafe esql, String login){
-      // Your code goes here.
-      // ...
-      // ...
+      /*try{
+      	//insert your code here
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+     }*/
    }//end
 
    public static void addItemStatus(Cafe esql, Integer order_id, String login){
