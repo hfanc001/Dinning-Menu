@@ -640,10 +640,192 @@ public class Cafe {
    }//end
 
    public static void UpdateMenu(Cafe esql, String login){
-      // Your code goes here.
-      // ...
-      // ...
-   }//end
+      try{
+      	String query = null;
+      	boolean done = false;
+      	do
+      	{
+	      	System.out.println("\tWhich action would you like to take today?");
+	      	System.out.println("\t\t1. Add an item");
+	      	System.out.println("\t\t2. Delete an item");
+	      	System.out.println("\t\t3. Edit an item");
+	      	System.out.println("\t\t9. Finished updating");
+	      	String input = in.readLine();
+	      	
+	      	if(input.equals("1"))
+		{
+			//enter itemname, cannot be null
+			String name = null;
+			do
+			{
+				System.out.print("\tPlease enter the name of the item: ");
+				name = in.readLine();
+			}while(name.equals(""));
+			
+			//enter type, cannot be null
+			String type = null;
+			do
+			{
+				System.out.print("\tPlease enter the type of the item: ");
+				type = in.readLine();
+			}while(type.equals(""));
+		
+			//enter price, cannot be null
+			String tmp = null;
+			do
+			{
+				System.out.print("\tPlease enter the price of the item: ");
+				tmp = in.readLine();
+			}while(tmp.equals(""));
+			Double price = Double.valueOf(tmp);
+			
+			System.out.print("\tPlease enter the description of the item: (Press enter to continue if no description)");
+			String description = in.readLine();
+			System.out.print("\tPlease enter the imageurl of the item: (Press enter to continue if no imageurl)");
+			String imageurl = in.readLine();
+			
+			//perform INSERT 
+			query =  String.format("INSERT INTO Menu VALUES ('%s', '%s', %s, '%s', '%s')", name, type, price, description, imageurl);
+			esql.executeUpdate(query);	
+		}
+		else if(input.equals("2"))
+		{
+			System.out.print("\tPlease enter the name of the item you want to delete: ");
+			String name = in.readLine();
+			
+			//check if item exists
+	 		query =  String.format("SELECT * FROM Menu M WHERE M.itemName = '%s'", name);
+ 			int userNum = esql.executeQueryCount(query);
+ 			
+ 			if(userNum > 0)
+ 			{
+ 				//item name exists, double check if the user really wants to delete it 
+ 				esql.executeQuery(query);
+ 				boolean deletion = false;
+ 				do
+ 				{
+ 					System.out.print("\tAre you sure you want to delete this item? ");
+	 				String confirm = in.readLine();
+	 				if((confirm.equals("Y")) || (confirm.equals("y")))
+	 				{
+	 					//deletion confirm, delete
+	 					query = String.format("DELETE FROM Menu WHERE itemname='%s'", name);
+			 			esql.executeUpdate(query);
+			 			System.out.println("\tItem Deleted");
+			 			deletion = true;
+			 		}
+			 		else if((confirm.equals("N")) || (confirm.equals("n")))
+			 		{
+			 			//do nothing
+			 			deletion = true;
+			 			System.out.println("\tItem Kept");
+			 		}
+			 		else 
+			 		{
+			 			System.out.println("\tUnrecognized choice! Please enter again");
+			 		}
+			 	}while(!deletion);
+		 		
+		 	}
+ 			else
+ 			{
+ 				System.out.println("\tThe item does not exist");		
+ 			}
+		}
+		else if(input.equals("3"))
+		{
+			System.out.print("Please enter the name of the item you want to update: ");
+			String name = in.readLine();
+			
+			//check if item exists
+	 		query =  String.format("SELECT * FROM Menu M WHERE M.itemName = '%s'", name);
+ 			int userNum = esql.executeQueryCount(query);
+ 			
+ 			if(userNum > 0)
+ 			{
+ 				//item name exists, ask user what the user wants to update 
+ 				esql.executeQuery(query);
+ 				String answer = null; 
+ 				boolean update = false;
+ 				do
+ 				{
+ 					System.out.println("\tWhat would you like to update?");
+				      	System.out.println("\t\t1. Type");
+				      	System.out.println("\t\t2. Price");
+				      	System.out.println("\t\t3. Description");
+				      	System.out.println("\t\t4. imageurl");
+				      	System.out.println("\t\t5. Nothing");
+				      	input = in.readLine();
+				      	if(input.equals("1"))
+			 		{
+			 			String type = null;
+						do
+						{
+							System.out.print("\tPlease enter the new type of the item: ");
+			 				type = in.readLine();
+						}while(type.equals(""));
+						query =  String.format("UPDATE Menu SET type='%s' WHERE itemname='%s'", type, name);
+						esql.executeUpdate(query);
+			 		}
+			 		else if(input.equals("2"))
+			 		{
+			 			//enter price, cannot be null
+						String tmp = null;
+						do
+						{
+							System.out.print("\tPlease enter the new price of the item: ");
+							tmp = in.readLine();
+						}while(tmp.equals(""));
+						Double price = Double.valueOf(tmp);
+						query =  String.format("UPDATE Menu SET price=%s WHERE itemname='%s'", price, name);
+						esql.executeUpdate(query);
+			 		}
+			 		else if(input.equals("3"))
+			 		{
+			 			System.out.print("\tPlease enter the new description of the item: ");
+			 			String description = in.readLine();
+			 			query =  String.format("UPDATE Menu SET description='%s' WHERE itemname='%s'", description, name);
+						esql.executeUpdate(query);
+			 		}
+			 		else if(input.equals("4"))
+			 		{
+			 			System.out.print("\tPlease enter the new imageurl of the item: ");
+			 			String imageurl = in.readLine();
+			 			query =  String.format("UPDATE Menu SET imageurl='%s' WHERE itemname='%s'", imageurl, name);
+						esql.executeUpdate(query);
+			 		}
+			 		else if(input.equals("5"))
+			 		{
+			 			System.out.print("\tThank you for updating");
+			 			update = true;
+			 		}
+			 		else
+			 		{
+			 			System.out.println("Unrecognized choice. Please enter again");
+			 		}
+			 	}while(!update);
+		 	}
+ 			else
+ 			{
+ 				System.out.println("\tThe item does not exist");		
+ 			}
+		}
+		else if(input.equals("9"))
+		{
+			System.out.println("Thank you for updating the menu");
+			done = true;
+		}
+		else
+		{
+			System.out.println("Unrecognized choice. Please enter again");
+		}	
+	}while(!done);
+      
+      
+      }catch(Exception e){
+         System.err.println (e.getMessage());
+     }
+   }//end UpdateMenu
 
    public static void ViewOrderStatus(Cafe esql, String login){
       // Your code goes here.
