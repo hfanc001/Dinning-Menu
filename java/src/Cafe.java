@@ -624,12 +624,17 @@ public class Cafe {
    }//end
 
    public static void ViewOrderHistory(Cafe esql, String login){
-      /*try{
-      	//insert your code here
+      try{
+      	System.out.println("The login is: " + login);
+      	String query = String.format("SELECT * FROM Orders WHERE login='%s' ORDER BY timestamprecieved DESC limit 5", login);
+      	if(esql.executeQuery(query) == 0)
+      	{
+      		System.out.println("\tThere is no past order");
+      	}
       }catch(Exception e){
-         System.err.println (e.getMessage());
-     }*/
-   }//end
+         System.err.println(e.getMessage());
+     }
+   }//end ViewOrderHistory
 
    public static void UpdateUserInfo(Cafe esql, String login){
       try{   	
@@ -689,7 +694,7 @@ public class Cafe {
       }catch(Exception e){
          System.err.println (e.getMessage());
      }
-   }//end
+   }//end UpdateUserInfo
 
    public static void ManagerUpdateUserInfo(Cafe esql){
       try{   	
