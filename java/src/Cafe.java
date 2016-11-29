@@ -287,9 +287,9 @@ public class Cafe {
                        case 1: BrowseMenuName(esql); break;
                        case 2: BrowseMenuType(esql); break;
                        case 3: AddOrder(esql, authorisedUser); break;
-                       case 4: UpdateOrder(esql, authorisedUser); break;
+                       case 4: UpdateOrder(esql); break;
                        case 5: ViewOrderHistory(esql, authorisedUser); break;
-                       case 6: ViewOrderStatus(esql, authorisedUser); break;
+                       case 6: ViewOrderStatus(esql); break;
                        case 7: UpdateUserInfo(esql, authorisedUser); break;
                        case 9: usermenu = false; break;
                        default : System.out.println("Unrecognized choice!"); break;
@@ -314,7 +314,7 @@ public class Cafe {
                        case 3: AddOrder(esql, authorisedUser); break;
                        case 4: EmployeeUpdateOrder(esql, authorisedUser); break;
                        case 5: ViewCurrentOrder(esql, authorisedUser); break;
-                       case 6: ViewOrderStatus(esql, authorisedUser); break;
+                       case 6: ViewOrderStatus(esql); break;
                        case 7: UpdateUserInfo(esql, authorisedUser); break;
                        case 9: usermenu = false; break;
                        default : System.out.println("Unrecognized choice!"); break;
@@ -340,9 +340,9 @@ public class Cafe {
                        case 3: AddOrder(esql, authorisedUser); break;
                        case 4: EmployeeUpdateOrder(esql, authorisedUser); break;
                        case 5: ViewCurrentOrder(esql, authorisedUser); break;
-                       case 6: ViewOrderStatus(esql, authorisedUser); break;
+                       case 6: ViewOrderStatus(esql); break;
                        case 7: ManagerUpdateUserInfo(esql, authorisedUser); break;
-                       case 8: UpdateMenu(esql, authorisedUser); break;
+                       case 8: UpdateMenu(esql); break;
                        case 9: usermenu = false; break;
                        default : System.out.println("Unrecognized choice!"); break;
 		      }//end switch
@@ -432,12 +432,12 @@ public class Cafe {
          int userNum = esql.executeQueryCount(query);
 				 if (userNum > 0)
 				 {
-				 	System.out.println("Logged in successfully!");
+				 	System.out.println("\tLogged in successfully!");
 					return login;
 				 }
 				 else
 				 {
-				 	System.out.println("Wrong user login or password");
+				 	System.out.println("\tWrong user login or password");
 				 	return null;
 				 }
       }catch(Exception e){
@@ -508,41 +508,41 @@ public class Cafe {
 		 		query = String.format("UPDATE Orders o SET total= '0' WHERE o.orderid = '%s'", order_id);
 		 		esql.executeUpdate(query);
 		 		
-		 		addItemStatus(esql, order_id, login);
+		 		addItemStatus(esql, order_id);
 		 		
 		 		boolean more = true;
 		 		
 		 		while(more)
 		 		{
-					System.out.print("\tIs there any other order to make? (Y/N)");
+					System.out.print("\tIs there any other order to make? (Y/N) ");
 		 			String input = in.readLine();		 		
 		 		
 			 		if((input.equals("n")) || (input.equals("N")))
 			 		{
 			 			more = false;
-			 			System.out.println("Your order:");
+			 			System.out.println("\tYour order:");
 			 			query =  String.format("SELECT i.itemname FROM itemStatus i WHERE i.orderid = '%s'", order_id);
 		 				int rowCount = esql.executeQuery(query);
-         		System.out.println ("Total Items: " + rowCount);
+         					System.out.println ("\tTotal Items: " + rowCount);
          		
-         		//print order total
-         		query =  String.format("SELECT o.total FROM Orders O WHERE O.orderid = '%s'", order_id);
+				 		//print order total
+				 		query =  String.format("SELECT o.total FROM Orders O WHERE O.orderid = '%s'", order_id);
 		 				Double total = Double.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
 		 				//DecimalFormat df = new DecimalFormat("$###,###.##");
 		 				//df.format(total);
-		 				System.out.println("Order total: $" + total);
-		 				System.out.println("Order id is: " + order_id);
-         		System.out.println("Thank you for your order!");
+		 				System.out.println("\tOrder total: $" + total);
+		 				System.out.println("\tOrder id is: " + order_id);
+         		System.out.println("\tThank you for your order!");
          					
 			 		}
 			 		else if ((input.equals("y")) || (input.equals("Y")))
 			 		{
-			 			addItemStatus(esql, order_id, login);
+			 			addItemStatus(esql, order_id);
 			 		}
 			 		else
 			 		{
 			 			System.out.println("\tUnrecognized choice");
-			 			System.out.println("\tIs there any other order to make? (Y/N)");
+			 			System.out.print("\tIs there any other order to make? (Y/N) ");
 			 		}
 				}		
 		 		
@@ -555,7 +555,7 @@ public class Cafe {
       
    }//end AddOrder
 
-   public static void UpdateOrder(Cafe esql, String login){
+   public static void UpdateOrder(Cafe esql){
    	try
    	{
       // ask for order id
@@ -591,7 +591,7 @@ public class Cafe {
 			 		input = in.readLine();
 			 		if(input.equals("1"))
 			 		{
-			 			addItemStatus(esql, order_id, login);
+			 			addItemStatus(esql, order_id);
 			 		}
 			 		else if(input.equals("2"))
 			 		{
@@ -599,12 +599,12 @@ public class Cafe {
 			 		}
 			 		else if(input.equals("3"))
 			 		{
-			 			System.out.println("Thank you for checking your order");
+			 			System.out.println("\tThank you for checking your order");
 			 			notAnswered = false;
 			 		}
 			 		else
 			 		{
-			 			System.out.println("Unrecognized choice. Please enter again");
+			 			System.out.println("\tUnrecognized choice. Please enter again");
 			 		}
 			 	}while(notAnswered);
 		 	}
@@ -632,11 +632,63 @@ public class Cafe {
    }//end
 
    public static void UpdateUserInfo(Cafe esql, String login){
-      /*try{
-      	//insert your code here
+      try{   	
+      	boolean done = false;
+      	
+      	do
+      	{
+      		//display user info 
+      		String query = String.format("SELECT login, password, phonenum, favitems FROM Users WHERE login='%s'", login);
+      		esql.executeQuery(query);
+      	
+	      	System.out.println("\tWhich would you like to update?");
+	      	System.out.println("\t\t1. Password");
+	      	System.out.println("\t\t2. Phone Number");
+	      	System.out.println("\t\t3. Favorite Items");
+	      	System.out.println("\t\t9. Nothing");
+	      	String input = in.readLine();
+	      	if(input.equals("1"))
+	      	{
+	      		//enter password, cannot be null
+			String password = null;
+			do
+			{
+				System.out.print("\tPlease enter your new password: ");
+				password = in.readLine();
+			}while(password.equals(""));
+			query =  String.format("UPDATE Users SET password='%s' WHERE login='%s'", password, login);
+			esql.executeUpdate(query);
+	      	}
+	      	else if(input.equals("2"))
+	      	{
+	      		//enter phone number, cannot be null
+	      		System.out.print("\tPlease enter your new phone number: ");
+			String num = in.readLine();
+			query =  String.format("UPDATE Users SET phonenum='%s' WHERE login='%s'", num, login);
+			esql.executeUpdate(query);
+	      	}
+	      	else if(input.equals("3"))
+	      	{
+	      		//enter fav
+	      		System.out.print("\tPlease enter your favorite items: ");
+			String fav = in.readLine();
+			query =  String.format("UPDATE Users SET favitems='%s' WHERE login='%s'", fav, login);
+			esql.executeUpdate(query);
+	      	}
+	      	else if(input.equals("9"))
+	      	{
+	      		System.out.println("\tThank you for updating your info");
+	  		done = true;
+	      	}
+	      	else
+	      	{
+	      		System.out.print("\tUnrecognized choice! Please enter again: ");
+	      	}
+	      	
+	 }while(!done);
       }catch(Exception e){
          System.err.println (e.getMessage());
-     }*/
+     }
    }//end
 
    public static void ManagerUpdateUserInfo(Cafe esql, String login){
@@ -647,7 +699,7 @@ public class Cafe {
      }*/
    }//end
 
-   public static void UpdateMenu(Cafe esql, String login){
+   public static void UpdateMenu(Cafe esql){
       try{
       	String query = null;
       	boolean done = false;
@@ -730,7 +782,7 @@ public class Cafe {
 			 		}
 			 		else 
 			 		{
-			 			System.out.println("\tUnrecognized choice! Please enter again");
+			 			System.out.print("\tUnrecognized choice! Please enter again: ");
 			 		}
 			 	}while(!deletion);
 		 		
@@ -809,7 +861,7 @@ public class Cafe {
 			 		}
 			 		else
 			 		{
-			 			System.out.println("Unrecognized choice. Please enter again");
+			 			System.out.print("Unrecognized choice. Please enter again: ");
 			 		}
 			 	}while(!update);
 		 	}
@@ -820,12 +872,12 @@ public class Cafe {
 		}
 		else if(input.equals("9"))
 		{
-			System.out.println("Thank you for updating the menu");
+			System.out.println("\tThank you for updating the menu");
 			done = true;
 		}
 		else
 		{
-			System.out.println("Unrecognized choice. Please enter again");
+			System.out.print("\tUnrecognized choice. Please enter again: ");
 		}	
 	}while(!done);
       
@@ -835,7 +887,7 @@ public class Cafe {
      }
    }//end UpdateMenu
 
-   public static void ViewOrderStatus(Cafe esql, String login){
+   public static void ViewOrderStatus(Cafe esql){
       try{
       	System.out.print("\tPlease enter your order ID: ");
       	String order_id = in.readLine();
@@ -865,7 +917,7 @@ public class Cafe {
      }*/
    }//end
 
-   public static void addItemStatus(Cafe esql, Integer order_id, String login){
+   public static void addItemStatus(Cafe esql, Integer order_id){
    	try{	
       //make item status 
 	 		System.out.print("\tPlease enter the item name: ");
@@ -912,19 +964,19 @@ public class Cafe {
 	public static void deleteItem(Cafe esql, Integer order_id){
    	try
    	{	
-   		System.out.println("\tWhich item would you like to delete?");
-			String item = in.readLine();
-			
-			//check if item exists
-	 		String query =  String.format("SELECT * FROM itemStatus i WHERE i.itemName='%s' AND i.orderid='%s'", item, order_id);
- 			int userNum = esql.executeQueryCount(query);
- 			
- 			if(userNum > 0)
- 			{
- 				//item name exists, delete
- 				query = String.format("DELETE FROM itemStatus WHERE itemname='%s' AND orderid='%s'", item, order_id);
+		System.out.print("\tWhich item would you like to delete? ");
+		String item = in.readLine();
+
+		//check if item exists
+		String query =  String.format("SELECT * FROM itemStatus i WHERE i.itemName='%s' AND i.orderid='%s'", item, order_id);
+			int userNum = esql.executeQueryCount(query);
+
+			if(userNum > 0)
+			{
+				//item name exists, delete
+				query = String.format("DELETE FROM itemStatus WHERE itemname='%s' AND orderid='%s'", item, order_id);
 		 		esql.executeUpdate(query);	
- 				System.out.println("\tDeleted!");
+				System.out.println("\tDeleted!");
 		 	}
 		 	else
 		 	{
