@@ -287,7 +287,7 @@ public class Cafe {
                        case 1: BrowseMenuName(esql); break;
                        case 2: BrowseMenuType(esql); break;
                        case 3: AddOrder(esql, authorisedUser); break;
-                       case 4: UpdateOrder(esql); break;
+                       case 4: UpdateOrder(esql, authorisedUser); break;
                        case 5: ViewOrderHistory(esql, authorisedUser); break;
                        case 6: ViewOrderStatus(esql); break;
                        case 7: UpdateUserInfo(esql, authorisedUser); break;
@@ -402,7 +402,7 @@ public class Cafe {
          String login = in.readLine();
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
-         System.out.print("\tEnter user phone: (can be leave blank)");
+         System.out.print("\tEnter user phone: ");
          String phone = in.readLine();
          
 				 String type="Customer";
@@ -555,66 +555,98 @@ public class Cafe {
       
    }//end AddOrder
 
-   public static void UpdateOrder(Cafe esql){
+   public static void UpdateOrder(Cafe esql, String login){
    	try
    	{
-      // ask for order id
-      System.out.print("\tPlease enter your order id: ");
-      String input = in.readLine();
-		 	Integer order_id = Integer.valueOf(input);		 		
-		 		
-      // check if paid
-      String query =  String.format("SELECT o.paid FROM Orders o WHERE o.orderid = '%s'", order_id);
-      String paid = esql.executeQueryGetResult(query).get(0).get(0);
+      		// ask for order id
+      		System.out.print("\tPlease enter your order id: ");
+ 		String input = in.readLine();
+		Integer order_id = Integer.valueOf(input);		 		
+		 
+		//check if the order id exist in the user's history
+		String query = String.format("SELECT login FROM Orders WHERE orderid=%s", order_id);
+		String exist = esql.executeQueryGetResult(query).get(0).get(0);
+
+		if(!login.equals(exist.replace(" ", "")))
+		{
+			System.out.println("\tSorry, that order id does not belong to you " + login + exist);
+		}
+		else
+		{
+   			// check if paid
+      			query =  String.format("SELECT o.paid FROM Orders o WHERE o.orderid = '%s'", order_id);
+      			String paid = esql.executeQueryGetResult(query).get(0).get(0);
 		 			
-		 	//	if paid, cannot update	
-		 	if(paid.equals("t"))
-		 	{
+			// if paid, cannot update	
+			if(paid.equals("t"))
+	 		{
 		 		System.out.println("\tSorry, the order has been processed");
-		 	}
-		 	//	if not paid, ask which to update
-      //		1. add item
-      //		2. delete item
-		 	else
-		 	{        		
-		 		boolean notAnswered = true;
+	 		}
+		
+			//	if not paid, ask which to update
+      			//		1. add item
+      			//		2. delete item
+			else
+			{        		
+				boolean notAnswered = true;
 		 		do
 		 		{
 					System.out.println("Your order:");
-		 			query =  String.format("SELECT i.itemname FROM itemStatus i WHERE i.orderid = '%s'", order_id);
-		 			int rowCount = esql.executeQuery(query);
-
-			 		System.out.println("\tWhat changes would you like to make?");
-			 		System.out.println("\t\t1. Add another item");
-			 		System.out.println("\t\t2. Delete an item");
-			 		System.out.println("\t\t3. Finish editing");
-			 		input = in.readLine();
-			 		if(input.equals("1"))
-			 		{
+		 			query =  String.format("SELECT i.itemname, i.status, i.comments FROM itemStatus i WHERE i.orderid = '%s'", order_id);
+			 		int rowCount = esql.executeQuery(query);
+	
+					System.out.println("\tWhat changes would you like to make?");
+					System.out.println("\t\t1. Add another item");
+				 	System.out.println("\t\t2. Delete an item");
+					System.out.println("\t\t3. Update an item");
+				 	System.out.println("\t\t9. Finish editing");
+				 	input = in.readLine();
+				 	if(input.equals("1"))
+				 	{
 			 			addItemStatus(esql, order_id);
+				 	}	
+				 	else if(input.equals("2"))
+				 	{
+				 		deleteItem(esql, order_id);
 			 		}
-			 		else if(input.equals("2"))
+					else if(input.equals("3"))
+					{
+						System.out.print("\tPlease enter the item name: ");
+						String itemname = in.readLine();
+					
+						query = String.format("SELECT * FROM itemStatus WHERE itemname='%s' AND orderid=%s", itemname, order_id);
+						int userNum = esql.executeQueryCount(query);
+						if(userNum > 0)
+						{
+							System.out.print("\tPlease enter the comment: ");
+							String comment = in.readLine();
+	
+							query = String.format("UPDATE itemStatus SET comments='%s' WHERE itemname='%s' AND orderid=%s", comment, itemname, order_id);
+							esql.executeUpdate(query);
+					}
+						else
+						{
+							System.out.println("\tThe item is not in your order!");
+						}
+					}		
+			 		else if(input.equals("9"))
 			 		{
-			 			deleteItem(esql, order_id);
-			 		}
-			 		else if(input.equals("3"))
-			 		{
-			 			System.out.println("\tThank you for checking your order");
-			 			notAnswered = false;
+		 				System.out.println("\tThank you for checking your order");
+		 				notAnswered = false;
 			 		}
 			 		else
 			 		{
-			 			System.out.println("\tUnrecognized choice. Please enter again");
-			 		}
-			 	}while(notAnswered);
-		 	}
-    }catch(Exception e)
-		{
-			System.err.println(e.getMessage());
+		 				System.out.println("\tUnrecognized choice. Please enter again");
+		 			}
+		 		}while(notAnswered);
+	 		}
 		}
+	}catch(Exception e)
+	{
+		System.err.println(e.getMessage());
+	}
    }//end UpdateOrder
 
-//-----------------------TO - DO---------------------------------------
    public static void EmployeeUpdateOrder(Cafe esql, String login){
      try{
       	System.out.print("\tPlease enter the order ID: ");
