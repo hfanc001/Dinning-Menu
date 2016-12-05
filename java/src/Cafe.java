@@ -577,12 +577,8 @@ public class Cafe {
   			query =  String.format("SELECT o.paid FROM Orders o WHERE o.orderid = '%s'", order_id);
   			String paid = esql.executeQueryGetResult(query).get(0).get(0);
 
-        // check status
-        query =  String.format("SELECT status FROM ItemStatus WHERE orderid = '%s'", order_id);
-        String status = esql.executeQueryAndReturnResult(query).get(0).get(0);
-		 			
-  			// if paid or started, cannot update	
-  			if(paid.equals("t") || !status.contains("Hasnt"))
+        // if paid, cannot update	
+  			if(paid.equals("t"))
   	 		{
   		 		System.out.println("\tSorry, the order has been processed");
   	 		}
@@ -1289,11 +1285,23 @@ public class Cafe {
 
 			if(userNum > 0)
 			{
-				//item name exists, delete
-				query = String.format("DELETE FROM itemStatus WHERE itemname='%s' AND orderid='%s'", item, order_id);
-		 		esql.executeUpdate(query);	
-				System.out.println("\tDeleted!");
-		 	}
+        // check status
+        query =  String.format("SELECT status FROM ItemStatus WHERE orderid = '%s'", order_id);
+        String status = esql.executeQueryAndReturnResult(query).get(0).get(0);
+          
+        //if item already started, cannot delete
+        if(status.contains("Hasnt"))
+      	{
+          //item name exists, delete
+      		query = String.format("DELETE FROM itemStatus WHERE itemname='%s' AND orderid='%s'", item, order_id);
+       		esql.executeUpdate(query);	
+      		System.out.println("\tDeleted!");
+		    }
+        else
+        {
+          System.out.println("\tSorry the item has been processed");
+        }
+     	}
 		 	else
 		 	{
 		 		System.out.print("\tThe item is not in your order list");
