@@ -118,13 +118,13 @@ public class Cafe {
       while (rs.next()){
          if(outputHeader){
             for(int i = 1; i <= numCol; i++){
-                System.out.print(rsmd.getColumnName(i) + "\t");
+                System.out.print(String.format("%-20.21s", rsmd.getColumnName(i)) + "\t");
             }
             System.out.println();
             outputHeader = false;
          }
          for (int i=1; i<=numCol; ++i)
-            System.out.print (rs.getString (i) + "\t");
+            System.out.print (String.format("%-20.21s", rs.getString(i)) + "\t");
          System.out.println ();
          ++rowCount;
       }//end while
@@ -774,6 +774,7 @@ public class Cafe {
 						else if((other.equals("N")) || (other.equals("n")))
 						{
 							answered = true;
+							more=false;
 						}
 						else
 						{
@@ -1286,8 +1287,8 @@ public class Cafe {
 			if(userNum > 0)
 			{
         // check status
-        query =  String.format("SELECT status FROM ItemStatus WHERE orderid = '%s'", order_id);
-        String status = esql.executeQueryAndReturnResult(query).get(0).get(0);
+        query =  String.format("SELECT status FROM ItemStatus WHERE orderid = '%s' AND itemName='%s'", order_id, item);
+        String status = esql.executeQueryGetResult(query).get(0).get(0);
           
         //if item already started, cannot delete
         if(status.contains("Hasnt"))
@@ -1296,7 +1297,19 @@ public class Cafe {
       		query = String.format("DELETE FROM itemStatus WHERE itemname='%s' AND orderid='%s'", item, order_id);
        		esql.executeUpdate(query);	
       		System.out.println("\tDeleted!");
-		    }
+
+		//add to old total price
+		query = String.format("SELECT o.total FROM Orders o WHERE o.orderid = '%s'", order_id);
+		Double total = Double.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
+		                                                            
+		//find the deleted item price
+		query = String.format("SELECT M.price FROM Menu M WHERE M.itemName='%s'", item);
+		total -= Double.valueOf(esql.executeQueryGetResult(query).get(0).get(0));
+		
+		//add to orders
+		query = String.format("UPDATE Orders o SET total= '%s' WHERE o.orderid = '%s'", total, order_id);
+		esql.executeUpdate(query);
+	}
         else
         {
           System.out.println("\tSorry the item has been processed");
